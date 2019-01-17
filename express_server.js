@@ -14,6 +14,23 @@ var urlDatabase = {
   '9sm5xK': 'http://www.google.com',
 };
 
+const users = {
+  userRandomID: {
+    id: 'userRandomID',
+    email: 'user@example.com',
+    password: 'purple-monkey-dinosaur',
+  },
+  user2RandomID: {
+    id: 'user2RandomID',
+    email: 'user2@example.com',
+    password: 'dishwasher-funk',
+  },
+};
+
+app.get('/', (req, res) => {
+  res.redirect('/urls');
+});
+
 app.get('/u/:shortURL', (req, res) => {
   let shortURL = req.params.shortURL;
   let longURL = urlDatabase[shortURL];
@@ -36,14 +53,13 @@ app.post('/logout', (req, res) => {
   res.redirect('/urls/new');
 });
 
-app.get('/register', (req, res) => {
-  console.log('buts');
-  res.render('/register');
+app.post('/register', (req, res) => {
+  res.redirect('/urls/new');
 }); // this will be the registration page
 
-app.post('/regiester', (req, res) => {
+app.get('/regiester', (req, res) => {
   // this will post the registration form
-  res.redirect('/login');
+  res.render('register');
 });
 
 app.get('/urls', (req, res) => {
