@@ -31,6 +31,14 @@ app.get('/', (req, res) => {
   res.redirect('/urls');
 });
 
+// function checkLogin(email, password) {
+//   for (users of data.users) {
+//     if (users.email === email && users.password === password) {
+//       return users;
+//     }
+//   }
+// } //login error
+
 app.get('/u/:shortURL', (req, res) => {
   let shortURL = req.params.shortURL;
   let longURL = urlDatabase[shortURL];
@@ -55,15 +63,35 @@ app.post('/logout', (req, res) => {
 
 app.get('/register', (req, res) => {
   // this will post the registration form
+
   res.render('register');
 }); //creates registration page
 
 app.post('/register', (req, res) => {
-  const username = req.body.email;
+  const email = req.body.email;
   const password = req.body.password;
   const new_id = generateRandomString();
-  users["new_id"] = {id: new_id , email: req.body.email, password: req.body.password};  //recieving data not defined in browser error msg
+  users['new_id'] = {
+    id: new_id,
+    email: req.body.email,
+    password: req.body.password,
+  }; //recieving data not defined in browser error msg
+  res.cookie('password', password);
+  res.cookie('email', email);
+  res.cookie('id', new_id);
   res.redirect('/urls/new');
+
+  let cookieEmail = res.cookie(email);
+  //let cookiePassword = res.cookie(passwork);
+
+  if (cookieEmail === req.body.email && '') {
+    console.log('error');
+  } else {
+    return res.redirect('/urls');
+  }
+  // if email === users.email then 404
+  // if email or password === "" then 404
+  // else continue
 }); // this will be the registration page
 
 app.get('/urls', (req, res) => {
