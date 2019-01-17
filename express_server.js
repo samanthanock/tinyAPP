@@ -36,6 +36,16 @@ app.post('/logout', (req, res) => {
   res.redirect('/urls/new');
 });
 
+app.get('/register', (req, res) => {
+  console.log('buts');
+  res.render('/register');
+}); // this will be the registration page
+
+app.post('/regiester', (req, res) => {
+  // this will post the registration form
+  res.redirect('/login');
+});
+
 app.get('/urls', (req, res) => {
   // Cookies that have not been signed
   // console.log('Cookies: ', req.cookies);
