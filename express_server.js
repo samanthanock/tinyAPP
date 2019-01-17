@@ -59,8 +59,6 @@ app.get('/urls/:id', (req, res) => {
   const longURL = urlDatabase[shortURL];
   let templateVars = { longURL: longURL, shortURL: shortURL }; //this is the same as {longURL: lonURL}
   res.render('urls_show', templateVars);
-  // let templateVars = { shortURL: req.params.id };
-  // res.render('urls_show', templateVars);
 }); // brings me to a blank page
 
 app.post('/urls/:id', (req, res) => {
@@ -78,4 +76,4 @@ function generateRandomString() {
   for (let i = 0; i < 6; i++)
     text += possible.charAt(Math.floor(Math.random() * possible.length));
   return text;
-} //generates a random string
+}
