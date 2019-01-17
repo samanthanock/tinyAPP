@@ -2,14 +2,21 @@
 <html lang="en">
   <head>
     <title>TinyApp</title>
-  </head>
-  <body>
-    <h1><b>LOOOOOOOOOOOOOOOOOOP</b></h1>
-    <ul>
-      <%urls.forEach(function(urls){%>
-      <li> short url <%= urls.shortUrl%>  :  long url <%= urls.longUrl %></li>
-      <%});%>
-      <href='#'> shorten url</href>
-    </ul>
-  </body>
-</html>
+    <body>
+      <% include partials/_headers %>
+      <h1><b>TinyApp Delete</b></h>
+      </head>
+        <ul>
+          <% for (let key in urls) {%>
+            <li> <u>short:</u>
+              <%= key %> ---> <u>long:</u>
+              <%= urls[key] %>
+              <form method="POST" action="/urls/<%= key %>/delete">
+                <button>DELETE</button>
+              </form>
+            </li>
+                <%} %>
+          </ul>
+        </body>
+        <href='#'> shorten url</href>
+      </html>
