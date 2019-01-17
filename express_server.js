@@ -24,10 +24,17 @@ app.get('/urls.json', (req, res) => {
   res.json(urlDatabase); // this renders my database of two urls
 });
 
+app.post('/login', (req, res) => {
+  // console.log('hello');
+  const username = req.body.username; //this is step.4 of compass w2d3 cookies
+  res.cookie('username', username);
+  res.redirect('/urls');
+});
+
 app.get('/urls', (req, res) => {
   // Cookies that have not been signed
   console.log('Cookies: ', req.cookies);
-  let templateVars = { urls: urlDatabase };
+  let templateVars = { urls: urlDatabase, username: req.cookies['username'] };
   res.render('urls_index', templateVars);
 }); // loop of index
 
@@ -61,7 +68,11 @@ app.post('/urls', (req, res) => {
 app.get('/urls/:id', (req, res) => {
   let shortURL = req.params.id;
   const longURL = urlDatabase[shortURL];
-  let templateVars = { longURL: longURL, shortURL: shortURL }; //this is the same as {longURL: lonURL}
+  let templateVars = {
+    longURL: longURL,
+    shortURL: shortURL,
+    username: req.cookies['username'],
+  }; //this is the same as {longURL: lonURL}
   res.render('urls_show', templateVars);
 }); // brings me to a blank page
 
