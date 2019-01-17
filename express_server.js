@@ -73,6 +73,7 @@ app.post('/urls', (req, res) => {
 app.get('/urls/:id', (req, res) => {
   let shortURL = req.params.id;
   const longURL = urlDatabase[shortURL];
+  console.log(shortURL, longURL, urlDatabase);
   let templateVars = {
     longURL: longURL,
     shortURL: shortURL,
