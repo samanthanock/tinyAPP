@@ -34,11 +34,14 @@ app.post('/urls/:id/delete', (req, res) => {
 });
 
 app.post('/urls/:id/update', (req, res) => {
-  let shortUrl = req.params.id;
-  res.render('urs_show');
+  let shortURL = req.params.id;
+  let longURL = req.body.longURL;
+  urlDatabase[shortURL] = longURL;
+  res.redirect('/urls');
+  //this endpoint takes in an ID for short URL and modifies that ID w/ new longURL.
 });
 
-app.get('/urls', (req, res) => {
+app.get('/urls/new', (req, res) => {
   res.render('urls_new');
 }); // brings me to form
 
@@ -52,8 +55,12 @@ app.post('/urls', (req, res) => {
 });
 
 app.get('/urls/:id', (req, res) => {
-  let templateVars = { shortURL: req.params.id };
+  let shortURL = req.params.id;
+  const longURL = urlDatabase[shortURL];
+  let templateVars = { longURL: longURL, shortURL: shortURL }; //this is the same as {longURL: lonURL}
   res.render('urls_show', templateVars);
+  // let templateVars = { shortURL: req.params.id };
+  // res.render('urls_show', templateVars);
 }); // brings me to a blank page
 
 app.post('/urls/:id', (req, res) => {
@@ -67,8 +74,8 @@ app.listen(PORT, () => {
 function generateRandomString() {
   //Solution from https://stackoverflow.com/questions/1349404/generate-random-string-characters-in-javascript
   let text = '';
-  const possible = 'abcdefg';
-  for (let i = 0; i < 5; i++)
+  const possible = 'abcdef346jakjdf3246akjdlfkjlvnslk3290SKSKSKLjt90NB';
+  for (let i = 0; i < 6; i++)
     text += possible.charAt(Math.floor(Math.random() * possible.length));
   return text;
 } //generates a random string
