@@ -28,17 +28,17 @@ app.post('/login', (req, res) => {
   // console.log('hello');
   const username = req.body.username; //this is step.4 of compass w2d3 cookies
   res.cookie('username', username);
-  res.redirect('/urls');
+  res.redirect('/urls/new');
 });
 
 app.post('/logout', (req, res) => {
   res.clearCookie('username');
-  res.redirect('/urls');
+  res.redirect('/urls/new');
 });
 
 app.get('/urls', (req, res) => {
   // Cookies that have not been signed
-  console.log('Cookies: ', req.cookies);
+  // console.log('Cookies: ', req.cookies);
   let templateVars = { urls: urlDatabase, username: req.cookies['username'] };
   res.render('urls_index', templateVars);
 }); // loop of index
@@ -58,7 +58,8 @@ app.post('/urls/:id/update', (req, res) => {
 });
 
 app.get('/urls/new', (req, res) => {
-  res.render('urls_new');
+  let templateVars = { urls: urlDatabase, username: req.cookies['username'] };
+  res.render('urls_new', templateVars);
 }); // brings me to form
 
 app.post('/urls', (req, res) => {
