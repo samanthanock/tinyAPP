@@ -1,6 +1,8 @@
 const express = require('express'); //express
 const app = express(); //express
 const PORT = 8080; // default port 8080
+var cookieParser = require('cookie-parser');
+app.use(cookieParser());
 
 app.set('view engine', 'ejs'); //express
 
@@ -23,6 +25,8 @@ app.get('/urls.json', (req, res) => {
 });
 
 app.get('/urls', (req, res) => {
+  // Cookies that have not been signed
+  console.log('Cookies: ', req.cookies);
   let templateVars = { urls: urlDatabase };
   res.render('urls_index', templateVars);
 }); // loop of index
