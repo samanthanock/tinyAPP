@@ -67,7 +67,26 @@ app.get('/register', (req, res) => {
   res.render('register');
 }); //creates registration page
 
+function isEmail(email) {
+  for (const userId in users) {
+    const user = users[userId];
+    if (user.email === email) {
+      return true;
+    }
+  }
+  return false;
+}
+
 app.post('/register', (req, res) => {
+  if (
+    req.body.email === '' ||
+    isEmail(req.body.email) ||
+    req.body.password === ''
+  ) {
+    res.redirect('register');
+    return console.log('ERROR!!!!!!!!!!!!!!!@#!@$#!@#!@!%@$^%&');
+  }
+
   const email = req.body.email;
   const password = req.body.password;
   const new_id = generateRandomString();
@@ -76,19 +95,12 @@ app.post('/register', (req, res) => {
     email: req.body.email,
     password: req.body.password,
   }; //recieving data not defined in browser error msg
+
   res.cookie('password', password);
   res.cookie('email', email);
   res.cookie('id', new_id);
   res.redirect('/urls/new');
 
-  let cookieEmail = res.cookie(email);
-  //let cookiePassword = res.cookie(passwork);
-
-  if (cookieEmail === req.body.email && '') {
-    console.log('error');
-  } else {
-    return res.redirect('/urls');
-  }
   // if email === users.email then 404
   // if email or password === "" then 404
   // else continue
