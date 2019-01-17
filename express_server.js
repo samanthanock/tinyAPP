@@ -53,14 +53,18 @@ app.post('/logout', (req, res) => {
   res.redirect('/urls/new');
 });
 
-app.post('/register', (req, res) => {
-  res.redirect('/urls/new');
-}); // this will be the registration page
-
-app.get('/regiester', (req, res) => {
+app.get('/register', (req, res) => {
   // this will post the registration form
   res.render('register');
-});
+}); //creates registration page
+
+app.post('/register', (req, res) => {
+  const username = req.body.email;
+  const password = req.body.password;
+  const new_id = generateRandomString();
+  users["new_id"] = {id: new_id , email: req.body.email, password: req.body.password};  //recieving data not defined in browser error msg
+  res.redirect('/urls/new');
+}); // this will be the registration page
 
 app.get('/urls', (req, res) => {
   // Cookies that have not been signed
@@ -92,7 +96,6 @@ app.post('/urls', (req, res) => {
   let newCode = generateRandomString();
   let longURL = req.body.longURL;
   urlDatabase[newCode] = longURL;
-  console.log('req.body is: ', req.body);
 
   res.redirect('/urls');
 });
