@@ -1,14 +1,20 @@
+//required
 const express = require('express'); //express
 const app = express(); //express
 const PORT = 8080; // default port 8080
 var cookieParser = require('cookie-parser');
-app.use(cookieParser());
-
 app.set('view engine', 'ejs'); //express
 
-const bodyParser = require('body-parser');
-app.use(bodyParser.urlencoded({ extended: true })); // this is the body parse middleware
+app.listen(PORT, () => {
+  console.log(`Everything is Good ${PORT}!`);
+}); // server
 
+//middleware
+app.use(cookieParser());
+const bodyParser = require('body-parser');
+app.use(bodyParser.urlencoded({ extended: true }));
+
+//databases
 var urlDatabase = {
   b2xVn2: 'http://www.lighthouselabs.ca',
   '9sm5xK': 'http://www.google.com',
@@ -27,59 +33,74 @@ const users = {
   },
 };
 
+app.get('/urls.json', (req, res) => {
+  res.json(urlDatabase);
+});
+
+//homepage
 app.get('/', (req, res) => {
   res.redirect('/urls');
 });
 
-// function checkLogin(email, password) {
-//   for (users of data.users) {
-//     if (users.email === email && users.password === password) {
-//       return users;
-//     }
-//   }
-// } //login error
+app.get('/urls', (req, res) => {
+  // Cookies that have not been signed
+  // console.log('Cookies: ', req.cookies);
+  let templateVars = { urls: urlDatabase, user: req.cookies['users'] };
+  res.render('urls_index', templateVars);
+}); // loop of index
+
+app.post('/urls', (req, res) => {
+  let newCode = generateRandomString();
+  let longURL = req.body.longURL;
+  urlDatabase[newCode] = longURL;
+  res.redirect('/urls');
+});
 
 app.get('/u/:shortURL', (req, res) => {
   let shortURL = req.params.shortURL;
   let longURL = urlDatabase[shortURL];
   res.redirect(longURL);
-}); // this is producing an error
-
-app.get('/urls.json', (req, res) => {
-  res.json(urlDatabase); // this renders my database of two urls
 });
 
-app.get('/login', (req, res) => {
-  console.log('IS THIS A FUCKIN LOGIN');
+app.get('/urls/new', (req, res) => {
+  let templateVars = { urls: urlDatabase, user: req.cookies['users'] };
+  res.render('urls_new', templateVars);
 });
 
-app.post('/login', (req, res) => {
-  // console.log('hello');
-  const username = req.body.new_id; //this is step.4 of compass w2d3 cookies
-  res.cookie('user', user);
-  res.redirect('/urls/new');
+app.get('/urls/:id', (req, res) => {
+  let shortURL = req.params.id;
+  const longURL = urlDatabase[shortURL];
+  console.log(shortURL, longURL, urlDatabase);
+  let templateVars = {
+    longURL: longURL,
+    shortURL: shortURL,
+    user: req.cookies['users'],
+  };
+  res.render('urls_show', templateVars);
 });
 
-app.post('/logout', (req, res) => {
-  res.clearCookie('username');
-  res.redirect('/urls/new');
+app.post('/urls/:id', (req, res) => {
+  const reqShortURL = req.params.id;
 });
+
+app.post('/urls/:id/update', (req, res) => {
+  let shortURL = req.params.id;
+  let longURL = req.body.longURL;
+  urlDatabase[shortURL] = longURL;
+  res.redirect('/urls');
+});
+
+app.post('/urls/:id/delete', (req, res) => {
+  const shortURL = req.params.id;
+  delete urlDatabase[shortURL];
+  res.redirect('/urls');
+});
+
+// client registration and login
 
 app.get('/register', (req, res) => {
-  // this will post the registration form
-
   res.render('register');
 }); //creates registration page
-
-function isEmail(email) {
-  for (const userId in users) {
-    const user = users[userId];
-    if (user.email === email) {
-      return true;
-    }
-  }
-  return false;
-}
 
 app.post('/register', (req, res) => {
   if (
@@ -88,7 +109,6 @@ app.post('/register', (req, res) => {
     req.body.password === ''
   ) {
     res.redirect('register');
-    return console.log('ERROR!!!!!!!!!!!!!!!@#!@$#!@#!@!%@$^%&');
   }
 
   const email = req.body.email;
@@ -110,59 +130,38 @@ app.post('/register', (req, res) => {
   // else continue
 }); // this will be the registration page
 
-app.get('/urls', (req, res) => {
-  // Cookies that have not been signed
-  // console.log('Cookies: ', req.cookies);
-  let templateVars = { urls: urlDatabase, user: req.cookies['users'] };
-  res.render('urls_index', templateVars);
-}); // loop of index
-
-app.post('/urls/:id/delete', (req, res) => {
-  const shortURL = req.params.id;
-  delete urlDatabase[shortURL];
-  res.redirect('/urls');
+app.get('error', (req, res) => {
+  res.render('error');
 });
 
-app.post('/urls/:id/update', (req, res) => {
-  let shortURL = req.params.id;
-  let longURL = req.body.longURL;
-  urlDatabase[shortURL] = longURL;
-  res.redirect('/urls');
-  //this endpoint takes in an ID for short URL and modifies that ID w/ new longURL.
+app.get('/login', (req, res) => {
+  'IS THIS A LOGIN PAGE';
+  res.render('login');
 });
 
-app.get('/urls/new', (req, res) => {
-  let templateVars = { urls: urlDatabase, user: req.cookies['users'] };
-  res.render('urls_new', templateVars);
-}); // brings me to form
-
-app.post('/urls', (req, res) => {
-  let newCode = generateRandomString();
-  let longURL = req.body.longURL;
-  urlDatabase[newCode] = longURL;
-
-  res.redirect('/urls');
+app.post('/login', (req, res) => {
+  // console.log('hello');
+  const username = req.body.new_id; //this is step.4 of compass w2d3 cookies
+  res.cookie('user', user);
+  res.redirect('/urls/new');
 });
 
-app.get('/urls/:id', (req, res) => {
-  let shortURL = req.params.id;
-  const longURL = urlDatabase[shortURL];
-  console.log(shortURL, longURL, urlDatabase);
-  let templateVars = {
-    longURL: longURL,
-    shortURL: shortURL,
-    user: req.cookies['users'],
-  }; //this is the same as {longURL: lonURL}
-  res.render('urls_show', templateVars);
-}); // brings me to a blank page
-
-app.post('/urls/:id', (req, res) => {
-  const reqShortURL = req.params.id;
+app.post('/logout', (req, res) => {
+  res.clearCookie('username');
+  res.redirect('/urls/new');
 });
 
-app.listen(PORT, () => {
-  console.log(`Everything is Good ${PORT}!`);
-}); //lets me know that i am successfully connected to server in terminal through NODEMON
+// global functions
+
+function isEmail(email) {
+  for (const userId in users) {
+    const user = users[userId];
+    if (user.email === email) {
+      return true;
+    }
+  }
+  return false;
+}
 
 function generateRandomString() {
   //Solution from https://stackoverflow.com/questions/1349404/generate-random-string-characters-in-javascript
@@ -172,3 +171,5 @@ function generateRandomString() {
     text += possible.charAt(Math.floor(Math.random() * possible.length));
   return text;
 }
+
+//lets me know that i am successfully connected to server in terminal through NODEMON
