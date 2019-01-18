@@ -28,6 +28,9 @@ const users = {
 };
 
 app.get('/', (req, res) => {
+  let userId = req.cookies.id;
+  res.cookies('userId', userId);
+
   res.redirect('/urls');
 });
 
@@ -51,8 +54,8 @@ app.get('/urls.json', (req, res) => {
 
 app.post('/login', (req, res) => {
   // console.log('hello');
-  const username = req.body.username; //this is step.4 of compass w2d3 cookies
-  res.cookie('username', username);
+  const username = req.body.new_id; //this is step.4 of compass w2d3 cookies
+  res.cookie('username', new_id);
   res.redirect('/urls/new');
 });
 
@@ -110,7 +113,7 @@ app.get('/urls', (req, res) => {
   // Cookies that have not been signed
   // console.log('Cookies: ', req.cookies);
   let templateVars = { urls: urlDatabase, username: req.cookies['username'] };
-  res.render('urls_index', templateVars);
+  res.render('urls_index', templateVars, userId);
 }); // loop of index
 
 app.post('/urls/:id/delete', (req, res) => {
@@ -129,7 +132,7 @@ app.post('/urls/:id/update', (req, res) => {
 
 app.get('/urls/new', (req, res) => {
   let templateVars = { urls: urlDatabase, username: req.cookies['username'] };
-  res.render('urls_new', templateVars);
+  res.render('urls_new', templateVars, userId);
 }); // brings me to form
 
 app.post('/urls', (req, res) => {
@@ -149,7 +152,7 @@ app.get('/urls/:id', (req, res) => {
     shortURL: shortURL,
     username: req.cookies['username'],
   }; //this is the same as {longURL: lonURL}
-  res.render('urls_show', templateVars);
+  res.render('urls_show', templateVars, userId);
 }); // brings me to a blank page
 
 app.post('/urls/:id', (req, res) => {
