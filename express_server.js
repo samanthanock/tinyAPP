@@ -130,8 +130,12 @@ app.post('/register', (req, res) => {
   // else continue
 }); // this will be the registration page
 
-app.get('error', (req, res) => {
+app.get('/error', (req, res) => {
   res.render('error');
+});
+
+app.post('/error', (req, res) => {
+  res.redirect('/');
 });
 
 app.get('/login', (req, res) => {
