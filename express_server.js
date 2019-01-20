@@ -78,13 +78,19 @@ app.get('/u/:shortURL', (req, res) => {
 });
 
 app.get('/urls/new', (req, res) => {
-  const user_id = generateRandomString();
-  users['user_id'] = {
-    id: user_id,
-    email: req.body.email,
-    password: req.body.password,
+  // lets grab user id from the cookies
+  const userID = req.cookies['id'];
+
+  // grab user email
+  const userEmail = req.cookies['email'];
+
+  // lets grab urls for that user
+  // put urls and user id into templateVars
+  const templateVars = {
+    urls: urlDatabase,
+    user_id: userID,
+    user_email: userEmail,
   };
-  let templateVars = { urls: urlDatabase, user_id: req.cookies['user_id'] };
   res.render('urls_new', templateVars);
 });
 
@@ -135,7 +141,7 @@ app.post('/register', (req, res) => {
   const email = req.body.email;
   const password = req.body.password;
   const user_id = generateRandomString();
-  users['user_id'] = {
+  users[user_id] = {
     id: user_id,
     email: req.body.email,
     password: req.body.password,
