@@ -39,14 +39,19 @@ app.get('/urls.json', (req, res) => {
 
 //homepage
 app.get('/', (req, res) => {
-  res.redirect('/urls');
+  res.redirect('/login');
 });
 
 app.get('/urls', (req, res) => {
-  // Cookies that have not been signed
-  // console.log('Cookies: ', req.cookies);
-  let templateVars = { urls: urlDatabase, user: req.cookies['users'] };
+  const user_id = generateRandomString();
+  users['user_id'] = {
+    id: user_id,
+    email: req.body.email,
+    password: req.body.password,
+  };
+  let templateVars = { urls: urlDatabase, user_id: users.user_id.id };
   res.render('urls_index', templateVars);
+  console.log(users.user_id.id);
 }); // loop of index
 
 app.post('/urls', (req, res) => {
@@ -63,7 +68,13 @@ app.get('/u/:shortURL', (req, res) => {
 });
 
 app.get('/urls/new', (req, res) => {
-  let templateVars = { urls: urlDatabase, user: req.cookies['users'] };
+  const user_id = generateRandomString();
+  users['user_id'] = {
+    id: user_id,
+    email: req.body.email,
+    password: req.body.password,
+  };
+  let templateVars = { urls: urlDatabase, user_id: req.cookies['user_id'] };
   res.render('urls_new', templateVars);
 });
 
@@ -74,7 +85,7 @@ app.get('/urls/:id', (req, res) => {
   let templateVars = {
     longURL: longURL,
     shortURL: shortURL,
-    user: req.cookies['users'],
+    user_id: req.cookies['user_id'],
   };
   res.render('urls_show', templateVars);
 });
@@ -108,31 +119,25 @@ app.post('/register', (req, res) => {
     isEmail(req.body.email) ||
     req.body.password === ''
   ) {
-    res.redirect('register');
+    res.status(400).send('Registration error, check email and password.');
   }
 
   const email = req.body.email;
   const password = req.body.password;
-  const new_id = generateRandomString();
-  users['new_id'] = {
-    id: new_id,
+  const user_id = generateRandomString();
+  users['user_id'] = {
+    id: user_id,
     email: req.body.email,
     password: req.body.password,
-  }; //recieving data not defined in browser error msg
+  };
 
   res.cookie('password', password);
   res.cookie('email', email);
-  res.cookie('id', new_id);
+  res.cookie('id', user_id);
   res.redirect('/urls/new');
-
-  // if email === users.email then 404
-  // if email or password === "" then 404
-  // else continue
-}); // this will be the registration page
-
-app.get('/error', (req, res) => {
-  res.render('error');
 });
+
+app.get('/error', (req, res) => {});
 
 app.post('/error', (req, res) => {
   res.redirect('/');
@@ -145,13 +150,15 @@ app.get('/login', (req, res) => {
 
 app.post('/login', (req, res) => {
   // console.log('hello');
-  const username = req.body.new_id; //this is step.4 of compass w2d3 cookies
-  res.cookie('user', user);
+  const user_id = req.body.user_id; //this is step.4 of compass w2d3 cookies
+  res.cookie('user', user_id);
   res.redirect('/urls/new');
 });
 
 app.post('/logout', (req, res) => {
-  res.clearCookie('username');
+  res.clearCookie('user_id');
+  res.clearCookie('passwor');
+  res.clearCookie('user_id');
   res.redirect('/urls/new');
 });
 
