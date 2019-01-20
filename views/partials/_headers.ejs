@@ -1,4 +1,37 @@
 <!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <title>Page Title</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+  </head>
+
+  <body>
+    <!-- if user_id form filled out, display user_id -->
+    <h1>
+      <%if (user_id) { %>
+      <!-- logged in as user email -->
+      <span>Logged in as: <%= user_email %> </span>
+      <form method="POST" action="/logout">
+        <!-- logout button -->
+        <button type="submit" class="btn btn-primary">logout</button>
+      </form>
+      <% } else { %>
+    </h1>
+    <!-- register button -->
+    <form method="GET" action="/register">
+      <button type="submit" class="btn btn-primary">REGISTER</button>
+    </form>
+    <!-- login button -->
+    <form method="GET" action="/login">
+      <button type="submit" class="btn btn-primary">LOGIN</button>
+    </form>
+    <% } %>
+  </body>
+</html>
+
+<!-- <!DOCTYPE html>
 <html lang="en">
   <meta charset="UTF-8" />
   <header>user <%=user_id%></header>
@@ -7,7 +40,7 @@
     <input type="submit" value="logout" />
   </form>
   <% } else{ %>
-  <form action="/login" method="POST" style="margin:10px;">
+  <!-- <form action="/login" method="POST" style="margin:10px;">
     <label for="user_id">Login:</label>
     <input
       id="user_id"
@@ -17,6 +50,7 @@
       style="width: 50px"
     />
     <input type="submit" value="login" />
-  </form>
-  <% } %>
-</html>
+  </form> -->
+<% } %>
+<!-- </html> -->
+-->

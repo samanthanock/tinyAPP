@@ -31,6 +31,11 @@ const users = {
     email: 'user2@example.com',
     password: 'dishwasher-funk',
   },
+  user3RandomID: {
+    id: 'user3RandomID',
+    email: 'a@a.com',
+    password: 'abc',
+  },
 };
 
 app.get('/urls.json', (req, res) => {
@@ -43,15 +48,20 @@ app.get('/', (req, res) => {
 });
 
 app.get('/urls', (req, res) => {
-  const user_id = generateRandomString();
-  users['user_id'] = {
-    id: user_id,
-    email: req.body.email,
-    password: req.body.password,
+  // lets grab user id from the cookies
+  const userID = req.cookies['id'];
+
+  // grab user email
+  const userEmail = req.cookies['email'];
+
+  // lets grab urls for that user
+  // put urls and user id into templateVars
+  let templateVars = {
+    urls: urlDatabase,
+    user_id: userID,
+    user_email: userEmail,
   };
-  let templateVars = { urls: urlDatabase, user_id: users.user_id.id };
   res.render('urls_index', templateVars);
-  console.log(users.user_id.id);
 }); // loop of index
 
 app.post('/urls', (req, res) => {
@@ -137,41 +147,69 @@ app.post('/register', (req, res) => {
   res.redirect('/urls/new');
 });
 
-app.get('/error', (req, res) => {});
-
-app.post('/error', (req, res) => {
-  res.redirect('/');
-});
-
 app.get('/login', (req, res) => {
   'IS THIS A LOGIN PAGE';
   res.render('login');
 });
 
 app.post('/login', (req, res) => {
-  // console.log('hello');
-  const user_id = req.body.user_id; //this is step.4 of compass w2d3 cookies
-  res.cookie('user', user_id);
-  res.redirect('/urls/new');
+  // grab user email from the request
+  const userEmail = req.body.email;
+  console.log(userEmail);
+  // grab user password from the request
+  const userPassword = req.body.password;
+  console.log(userPassword);
+  // get user that has the email entered
+  const user = getUserByEmail(userEmail);
+  console.log(user);
+  // check if user exists
+  if (user) {
+    // then set the cookies
+    res.cookie('password', user.password);
+    res.cookie('email', user.email);
+    res.cookie('id', user.id);
+    res.redirect('/urls');
+  } else {
+    // if no user is found, 403 error sent to client
+    res.status(403).send('Login error: no user found.');
+  }
 });
 
 app.post('/logout', (req, res) => {
-  res.clearCookie('user_id');
-  res.clearCookie('passwor');
-  res.clearCookie('user_id');
-  res.redirect('/urls/new');
+  // clears cookies at logout
+  res.clearCookie('id');
+  res.clearCookie('password');
+  res.clearCookie('email');
+  res.redirect('/login');
 });
 
 // global functions
 
 function isEmail(email) {
+  //this part loops through keys in user object
   for (const userId in users) {
+    //this takes a single user out of the users object
     const user = users[userId];
+    // if we found a user with an email that equals the input email, return true
     if (user.email === email) {
       return true;
     }
   }
   return false;
+}
+
+function getUserByEmail(email) {
+  //this part loops through keys in user object
+  for (const userId in users) {
+    //this takes a single user out of the users object
+    const user = users[userId];
+    // if we found a user with an email that equals the input email, return true
+    if (user.email === email) {
+      return user;
+    }
+  }
+  // didn't find user, returning null
+  return null;
 }
 
 function generateRandomString() {
