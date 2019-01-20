@@ -226,5 +226,3 @@ function generateRandomString() {
     text += possible.charAt(Math.floor(Math.random() * possible.length));
   return text;
 }
-
-//lets me know that i am successfully connected to server in terminal through NODEMON
