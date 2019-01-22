@@ -160,15 +160,16 @@ app.post('/register', (req, res) => {
 
   const email = req.body.email;
   const password = req.body.password;
+  const hashPassword = bcrypt.hashSync(password, 10);
   const user_id = generateRandomString();
   users[user_id] = {
     id: user_id,
     email: req.body.email,
-    password: bcrypt.hashSync(password, 10)
+    password: hashPassword
     // password: req.body.password
   };
 
-  res.cookie('password', password);
+  res.cookie('password', hashPassword);
   res.cookie('email', email);
   res.cookie('id', user_id);
   res.redirect('/urls/new');
@@ -191,14 +192,22 @@ app.post('/login', (req, res) => {
   console.log(user);
   // check if user exists
   if (user) {
-    // then set the cookies
+    // loop thru users object to grab password from each user
+    for (const user in users) {
+      let password = users[user].password;
+      //check if entered password = hashed password in database
+      if (bcrypt.compareSync(userPassword, password)) {
+        // then set the cookies
+      }
+    }
+
+    // } else {
+    //   // if no user is found, 403 error sent to client
+    //   res.status(403).send('Login error: no user found.');
     res.cookie('password', user.password);
     res.cookie('email', user.email);
     res.cookie('id', user.id);
     res.redirect('/urls');
-  } else {
-    // if no user is found, 403 error sent to client
-    res.status(403).send('Login error: no user found.');
   }
 });
 
