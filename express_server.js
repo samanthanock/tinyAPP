@@ -4,6 +4,7 @@ const app = express(); //express
 const PORT = 8080; // default port 8080
 var cookieParser = require('cookie-parser');
 app.set('view engine', 'ejs'); //express
+const bcrypt = require('bcrypt');
 
 app.listen(PORT, () => {
   console.log(`Everything is Good ${PORT}!`);
@@ -30,17 +31,17 @@ const users = {
   userRandomID: {
     id: 'userRandomID',
     email: 'user@example.com',
-    password: '123'
+    password: bcrypt.hashSync('123', 10)
   },
   user2RandomID: {
     id: 'user2RandomID',
     email: 'user2@example.com',
-    password: '234'
+    password: bcrypt.hashSync('234', 10)
   },
   user3RandomID: {
     id: 'user3RandomID',
     email: 'a@a.com',
-    password: 'abc'
+    password: bcrypt.hashSync('abc', 10)
   }
 };
 
@@ -163,7 +164,8 @@ app.post('/register', (req, res) => {
   users[user_id] = {
     id: user_id,
     email: req.body.email,
-    password: req.body.password
+    password: bcrypt.hashSync(password, 10)
+    // password: req.body.password
   };
 
   res.cookie('password', password);
