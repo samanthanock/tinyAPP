@@ -193,21 +193,19 @@ app.post('/login', (req, res) => {
   // check if user exists
   if (user) {
     // loop thru users object to grab password from each user
-    for (const user in users) {
-      let password = users[user].password;
-      //check if entered password = hashed password in database
-      if (bcrypt.compareSync(userPassword, password)) {
-        // then set the cookies
-      }
+    // for (const user in users) {
+    let password = user.password;
+    //check if entered password = hashed password in database
+    if (bcrypt.compareSync(userPassword, password)) {
+      // then set the cookies
+      res.cookie('password', user.password);
+      res.cookie('email', user.email);
+      res.cookie('id', user.id);
+      res.redirect('/urls');
+    } else {
+      //   // if no user is found, 403 error sent to client
+      res.status(403).send('Login error: no user found.');
     }
-
-    // } else {
-    //   // if no user is found, 403 error sent to client
-    //   res.status(403).send('Login error: no user found.');
-    res.cookie('password', user.password);
-    res.cookie('email', user.email);
-    res.cookie('id', user.id);
-    res.redirect('/urls');
   }
 });
 
