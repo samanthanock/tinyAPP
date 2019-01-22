@@ -16,26 +16,32 @@ app.use(bodyParser.urlencoded({ extended: true }));
 
 //databases
 var urlDatabase = {
-  b2xVn2: 'http://www.lighthouselabs.ca',
-  '9sm5xK': 'http://www.google.com',
+  BnfXle: {
+    longURL: 'http://www.facebook.com',
+    userID: 'userRandomID'
+  },
+  b2xVn2: {
+    longURL: 'http://www.lighthouselabs.ca',
+    userID: 'user2RandomID'
+  }
 };
 
 const users = {
   userRandomID: {
     id: 'userRandomID',
     email: 'user@example.com',
-    password: 'purple-monkey-dinosaur',
+    password: '123'
   },
   user2RandomID: {
     id: 'user2RandomID',
     email: 'user2@example.com',
-    password: 'dishwasher-funk',
+    password: '234'
   },
   user3RandomID: {
     id: 'user3RandomID',
     email: 'a@a.com',
-    password: 'abc',
-  },
+    password: 'abc'
+  }
 };
 
 app.get('/urls.json', (req, res) => {
@@ -50,16 +56,15 @@ app.get('/', (req, res) => {
 app.get('/urls', (req, res) => {
   // lets grab user id from the cookies
   const userID = req.cookies['id'];
-
   // grab user email
   const userEmail = req.cookies['email'];
-
   // lets grab urls for that user
   // put urls and user id into templateVars
+
   let templateVars = {
     urls: urlDatabase,
     user_id: userID,
-    user_email: userEmail,
+    user_email: userEmail
   };
   res.render('urls_index', templateVars);
 }); // loop of index
@@ -68,6 +73,7 @@ app.post('/urls', (req, res) => {
   let newCode = generateRandomString();
   let longURL = req.body.longURL;
   urlDatabase[newCode] = longURL;
+
   res.redirect('/urls');
 });
 
@@ -78,7 +84,6 @@ app.get('/u/:shortURL', (req, res) => {
 });
 
 app.get('/urls/new', (req, res) => {
-  // lets grab user id from the cookies
   const userID = req.cookies['id'];
 
   // grab user email
@@ -89,8 +94,11 @@ app.get('/urls/new', (req, res) => {
   const templateVars = {
     urls: urlDatabase,
     user_id: userID,
-    user_email: userEmail,
+    user_email: userEmail
   };
+  if (!userID) {
+    res.send('Error! looks like you are not logged in, bro!');
+  }
   res.render('urls_new', templateVars);
 });
 
@@ -101,7 +109,7 @@ app.get('/urls/:id', (req, res) => {
   let templateVars = {
     longURL: longURL,
     shortURL: shortURL,
-    user_id: req.cookies['user_id'],
+    user_id: req.cookies['user_id']
   };
   res.render('urls_show', templateVars);
 });
@@ -144,7 +152,7 @@ app.post('/register', (req, res) => {
   users[user_id] = {
     id: user_id,
     email: req.body.email,
-    password: req.body.password,
+    password: req.body.password
   };
 
   res.cookie('password', password);

@@ -9,8 +9,8 @@
         <ul>
           <% for (let key in urls) {%>
             <li> <u>short:</u>
-              <%= key %> ---> <u>long:</u>
-              <%= urls[key] %>
+              <%= key%> ---> <u>long:</u>
+              <%= urls[key].longURL %>
               <form method="POST" action="/urls/<%= key %>/delete">
                 <button>DELETE</button>
               </form>
