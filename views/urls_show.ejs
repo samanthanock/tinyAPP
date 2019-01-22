@@ -4,20 +4,24 @@
     <% include partials/_headers %>
   </head>
   <body style="font-size:20px; padding:50px;">
+    <% if (longURL.userID === user_id){ %>
     <form
       action="/urls/<%= shortURL %>/update"
       method="POST"
       style="margin:150px;"
     >
-      <label for="longURL">Update: <%= longURL %></label>
+      <label for="longURL">Update: <%= longURL.longURL %></label>
       <input
         id="longURL"
         type="text"
         name="longURL"
-        value="<%= longURL %>"
+        value="<%= longURL.longURL %>"
         style="width: 300px"
       />
       <input type="submit" value="Update" />
     </form>
+    <% } else { %>
+    <p>Error: not logged in as correct user.</p>
+    <%}%>
   </body>
 </html>

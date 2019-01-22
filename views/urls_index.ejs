@@ -8,6 +8,7 @@
       </head>
         <ul>
           <% for (let key in urls) {%>
+            <% if (urls[key].userID === user_id) {%>
             <li> <u>short:</u>
               <%= key%> ---> <u>long:</u>
               <%= urls[key].longURL %>
@@ -18,6 +19,7 @@
                 <button>UPDATE</button>
               </form>
             </li>
+              <%} %>
                 <%} %>
           </ul>
         </body>

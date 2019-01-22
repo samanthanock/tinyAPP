@@ -22,7 +22,7 @@ var urlDatabase = {
   },
   b2xVn2: {
     longURL: 'http://www.lighthouselabs.ca',
-    userID: 'user2RandomID'
+    userID: 'user3RandomID'
   }
 };
 
@@ -70,17 +70,27 @@ app.get('/urls', (req, res) => {
 }); // loop of index
 
 app.post('/urls', (req, res) => {
+  // get userId from cookies
+  let userID = req.cookies['id'];
+  // make new short code
   let newCode = generateRandomString();
+  // get url from req
   let longURL = req.body.longURL;
-  urlDatabase[newCode] = longURL;
+  console.log(`short code: ${newCode} longurl: ${longURL}`);
+  // stick longurl in database at newCode key
+  urlDatabase[newCode] = {
+    longURL: longURL,
+    userID: userID
+  };
 
   res.redirect('/urls');
 });
 
 app.get('/u/:shortURL', (req, res) => {
   let shortURL = req.params.shortURL;
-  let longURL = urlDatabase[shortURL];
-  res.redirect(longURL);
+  let url = urlDatabase[shortURL];
+  console.log(url);
+  res.redirect(url.longURL);
 });
 
 app.get('/urls/new', (req, res) => {
@@ -109,7 +119,8 @@ app.get('/urls/:id', (req, res) => {
   let templateVars = {
     longURL: longURL,
     shortURL: shortURL,
-    user_id: req.cookies['user_id']
+    user_id: req.cookies['id'],
+    user_email: req.cookies['email']
   };
   res.render('urls_show', templateVars);
 });
