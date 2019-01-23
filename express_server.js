@@ -18,9 +18,8 @@ app.use(bodyParser.urlencoded({ extended: true }));
 app.use(
   cookieSession({
     name: 'session',
-    keys: ['key1', 'key2'],
+    keys: ['123']
     // cookie options
-    maxAge: 24 * 60 * 60 * 1000 // 24 hours
   })
 );
 
@@ -105,6 +104,7 @@ app.get('/u/:shortURL', (req, res) => {
 
 app.get('/urls/new', (req, res) => {
   const userID = req.session.user_id;
+  console.log(userID);
 
   // grab user email
   const userEmail = req.session.email;
@@ -118,8 +118,9 @@ app.get('/urls/new', (req, res) => {
   };
   if (!userID) {
     res.send('Error! looks like you are not logged in, bro!');
+  } else {
+    res.render('urls_new', templateVars);
   }
-  res.render('urls_new', templateVars);
 });
 
 app.get('/urls/:id', (req, res) => {
@@ -129,25 +130,26 @@ app.get('/urls/:id', (req, res) => {
   let templateVars = {
     longURL: longURL,
     shortURL: shortURL,
-    user_id: req.session.id,
+    user_id: req.session.user_id,
     user_email: req.session.email
   };
   res.render('urls_show', templateVars);
 });
 
 app.post('/urls/:id', (req, res) => {
-  const reqShortURL = req.params.id;
+  const reqShortURL = req.params.user_id;
 });
 
 app.post('/urls/:id/update', (req, res) => {
-  let shortURL = req.params.id;
+  // console.log(req.params.user_id);
+  let shortURL = req.params.user_id;
   let longURL = req.body.longURL;
   urlDatabase[shortURL] = longURL;
   res.redirect('/urls');
 });
 
 app.post('/urls/:id/delete', (req, res) => {
-  const shortURL = req.params.id;
+  const shortURL = req.params.user_id;
   delete urlDatabase[shortURL];
   res.redirect('/urls');
 });
@@ -192,13 +194,14 @@ app.get('/login', (req, res) => {
 app.post('/login', (req, res) => {
   // grab user email from the request
   const userEmail = req.body.email;
-  console.log(userEmail);
   // grab user password from the request
   const userPassword = req.body.password;
-  console.log(userPassword);
+  // console.log(userPassword);
   // get user that has the email entered
   const user = getUserByEmail(userEmail);
   console.log(user);
+
+  // console.log(user);
   // check if user exists
   if (user) {
     // loop thru users object to grab password from each user
@@ -207,14 +210,17 @@ app.post('/login', (req, res) => {
     //check if entered password = hashed password in database
     if (bcrypt.compareSync(userPassword, password)) {
       // then set the cookies
-      req.session.password = user.password;
+      req.session.password = password;
       req.session.email = user.email;
-      req.session.user_id = user.id;
+      req.session.user_id = user.user_id;
       res.redirect('/urls');
     } else {
       //   // if no user is found, 403 error sent to client
-      res.status(403).send('Login error: no user found.');
+      res.status(403).send('Password error: no user found.');
     }
+  } else {
+    //   // if no user is found, 403 error sent to client
+    res.status(403).send('Login error: no user found.');
   }
 });
 

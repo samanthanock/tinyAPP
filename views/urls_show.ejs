@@ -4,7 +4,7 @@
     <% include partials/_headers %>
   </head>
   <body style="font-size:20px; padding:50px;">
-    <% if (longURL.userID === user_id){ %>
+    <% if (longURL.user_id === user_id){ %>
     <form
       action="/urls/<%= shortURL %>/update"
       method="POST"

@@ -8,7 +8,7 @@
       </head>
         <ul>
           <% for (let key in urls) {%>
-            <% if (urls[key].userID === user_id) {%>
+            <% if (urls[key].user_id === user_id) {%>
             <li> <u>short:</u>
               <%= key%> ---> <u>long:</u>
               <%= urls[key].longURL %>
