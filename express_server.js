@@ -3,8 +3,10 @@ const express = require('express'); //express
 const app = express(); //express
 const PORT = 8080; // default port 8080
 // var cookieParser = require('cookie-parser');
+const cookieSession = require('cookie-session');
 app.set('view engine', 'ejs'); //express
 const bcrypt = require('bcrypt');
+const bodyParser = require('body-parser');
 
 app.listen(PORT, () => {
   console.log(`Everything is Good ${PORT}!`);
@@ -12,15 +14,11 @@ app.listen(PORT, () => {
 
 //middleware
 // app.use(cookieParser());
-// const bodyParser = require('body-parser');
-// app.use(bodyParser.urlencoded({ extended: true }));
-var cookieSession = require('cookie-session');
+app.use(bodyParser.urlencoded({ extended: true }));
 app.use(
   cookieSession({
     name: 'session',
-    keys: [
-      /* secret keys */
-    ],
+    keys: ['key1', 'key2'],
     // cookie options
     maxAge: 24 * 60 * 60 * 1000 // 24 hours
   })
@@ -67,9 +65,9 @@ app.get('/', (req, res) => {
 
 app.get('/urls', (req, res) => {
   // lets grab user id from the cookies
-  const userID = req.session['id'];
+  const userID = req.session.user_id;
   // grab user email
-  const userEmail = req.session['email'];
+  const userEmail = req.session.email;
   // lets grab urls for that user
   // put urls and user id into templateVars
 
@@ -83,7 +81,7 @@ app.get('/urls', (req, res) => {
 
 app.post('/urls', (req, res) => {
   // get userId from cookies
-  let userID = req.session['id'];
+  let userID = req.session.user_id;
   // make new short code
   let newCode = generateRandomString();
   // get url from req
@@ -106,10 +104,10 @@ app.get('/u/:shortURL', (req, res) => {
 });
 
 app.get('/urls/new', (req, res) => {
-  const userID = req.session['id'];
+  const userID = req.session.user_id;
 
   // grab user email
-  const userEmail = req.session['email'];
+  const userEmail = req.session.email;
 
   // lets grab urls for that user
   // put urls and user id into templateVars
@@ -131,8 +129,8 @@ app.get('/urls/:id', (req, res) => {
   let templateVars = {
     longURL: longURL,
     shortURL: shortURL,
-    user_id: req.session['id'],
-    user_email: req.session['email']
+    user_id: req.session.id,
+    user_email: req.session.email
   };
   res.render('urls_show', templateVars);
 });
@@ -180,9 +178,9 @@ app.post('/register', (req, res) => {
     // password: req.body.password
   };
 
-  res.session('password', hashPassword);
-  res.session('email', email);
-  res.session('id', user_id);
+  req.session.password = hashPassword;
+  req.session.email = email;
+  req.session.user_id = user_id;
   res.redirect('/urls/new');
 });
 
@@ -209,9 +207,9 @@ app.post('/login', (req, res) => {
     //check if entered password = hashed password in database
     if (bcrypt.compareSync(userPassword, password)) {
       // then set the cookies
-      res.session('password', user.password);
-      res.session('email', user.email);
-      res.session('id', user.id);
+      req.session.password = user.password;
+      req.session.email = user.email;
+      req.session.user_id = user.id;
       res.redirect('/urls');
     } else {
       //   // if no user is found, 403 error sent to client
