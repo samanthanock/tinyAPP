@@ -1,15 +1,9 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <% include partials/_headers %>
-  </head>
+  <head> </head>
   <body style="font-size:20px; padding:50px;">
-    <% if (longURL.user_id === user_id){ %>
-    <form
-      action="/urls/<%= shortURL %>/update"
-      method="POST"
-      style="margin:150px;"
-    >
+    <% include partials/_headers %> <% if (longURL.userID === user_id){ %>
+    <form action="/urls/<%= shortURL %>/" method="POST" style="margin:150px;">
       <label for="longURL">Update: <%= longURL.longURL %></label>
       <input
         id="longURL"

@@ -8,7 +8,7 @@
       </head>
         <ul>
           <% for (let key in urls) {%>
-            <% if (urls[key].user_id === user_id) {%>
+            <% if (urls[key].userID === user_id) {%>
             <li> <u>short:</u>
               <%= key%> ---> <u>long:</u>
               <%= urls[key].longURL %>
@@ -23,5 +23,5 @@
                 <%} %>
           </ul>
         </body>
-        <href='#'> shorten url</href>
+        <a href="/urls/new" > shorten url</a>
       </html>
